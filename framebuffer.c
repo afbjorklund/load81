@@ -96,10 +96,17 @@ void drawLine(frameBuffer *fb, int x1, int y1, int x2, int y2, int r, int g, int
 
 /* ============================= Bitmap font =============================== */
 void bfLoadFont(char **c) {
+#if FONT_C64
+    /* Set all the entries to NULL. */
+    memset(c,0,sizeof(unsigned char*)*64);
+    /* Now populate the entries we have in our bitmap font description. */
+    #include "c64font.h"
+#else
     /* Set all the entries to NULL. */
     memset(c,0,sizeof(unsigned char*)*256);
     /* Now populate the entries we have in our bitmap font description. */
     #include "bitfont.h"
+#endif
 }
 
 void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, int alpha) {
@@ -107,6 +114,20 @@ void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, in
     unsigned char *bitmap = BitmapFont[c&0xff];
 
     if (!bitmap) bitmap = BitmapFont['?'];
+#if FONT_C64
+    for (y = 0; y < 8; y++) {
+        for (x = 0; x < 8; x++) {
+            int byte = (y*8+x)/8;
+            int bit = x%8;
+            int set = bitmap[byte] & (0x80>>bit);
+
+            if (set) setPixelWithAlpha(fb,xp+2*x,yp-2*y+15,r,g,b,alpha);
+            if (set) setPixelWithAlpha(fb,xp+2*x+1,yp-2*y+15,r,g,b,alpha);
+            if (set) setPixelWithAlpha(fb,xp+2*x,yp-2*y+15+1,r,g,b,alpha);
+            if (set) setPixelWithAlpha(fb,xp+2*x+1,yp-2*y+15+1,r,g,b,alpha);
+        }
+    }
+#else
     for (y = 0; y < 16; y++) {
         for (x = 0; x < 16; x++) {
             int byte = (y*16+x)/8;
@@ -116,6 +137,7 @@ void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, in
             if (set) setPixelWithAlpha(fb,xp+x,yp-y+15,r,g,b,alpha);
         }
     }
+#endif
 }
 
 void bfWriteString(frameBuffer *fb, int xp, int yp, const char *s, int len, int r, int g, int b, int alpha) {
