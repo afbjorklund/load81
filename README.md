@@ -59,6 +59,7 @@ Drawing functions:
 * getpixel(x,y): return the red,gree,blue value of the specified pixel.
 * sprite(file,x,y,[rotation],[antialiasing]): draw sprite at coordinates with the specified rotation (in degrees, default 0) and antialiasing (default false).
 * sfx(i): play sound effect #i
+* sound(file): play sound
 
 Control functions:
 

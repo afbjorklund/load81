@@ -30,3 +30,6 @@ void PlaySample();
 void SynthSample(int length, float* buffer, FILE* file);
 
 int SDLAudioInit();
+
+int LoadSound(const char* filename);
+void PlaySound();

@@ -259,6 +259,16 @@ int sfxBinding(lua_State *L) {
     return 0;
 }
 
+int soundBinding(lua_State *L) {
+    const char *filename;
+
+    filename = lua_tostring(L, 1);
+
+    LoadSound(filename);
+    PlaySound();
+    return 0;
+}
+
 /* ========================== Events processing ============================= */
 
 void setup(void) {
@@ -494,6 +504,8 @@ void resetProgram(void) {
     lua_setglobal(l81.L,"sprite");
     lua_pushcfunction(l81.L,sfxBinding);
     lua_setglobal(l81.L,"sfx");
+    lua_pushcfunction(l81.L,soundBinding);
+    lua_setglobal(l81.L,"sound");
 
     initSpriteEngine(l81.L);
 

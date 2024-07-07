@@ -635,3 +635,23 @@ int SDLAudioInit()
 	SDL_PauseAudio(0);
 	return 0;
 }
+
+int LoadSound(const char* filename)
+{
+	SDL_AudioSpec *spec;
+
+	SDL_AudioSpec des;
+	des.freq = 44100;
+	des.format = AUDIO_S16SYS;
+	des.channels = 1;
+	if ((spec = SDL_LoadWAV(filename, &des, &audio_buf, &audio_len)) == NULL) {
+		return -1;
+	}
+	return 0;
+}
+
+void PlaySound()
+{
+	playing_audio=true;
+	audio_off = 0;
+}
