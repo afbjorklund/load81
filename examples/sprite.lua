@@ -12,4 +12,7 @@ function draw()
     if (x > WIDTH) then 
         t, x = 0, 0
     end
+    if (y < 5) then
+        sound("examples/bounce.wav")
+    end
 end
