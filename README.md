@@ -74,6 +74,7 @@ SOUND EFFECTS
 4: hit/hurt
 5: jump
 6: blip/select
+7: thrust
 
 KEYBOARD EVENTS
 ===

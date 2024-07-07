@@ -98,6 +98,7 @@ function draw()
     if keyboard.pressed['up'] then
         shipvx = shipvx + 0.15*math.sin(shipa)
         shipvy = shipvy + 0.15*math.cos(shipa)
+        sfx(7)
     end
     if keyboard.pressed['space'] then fire() end
 
