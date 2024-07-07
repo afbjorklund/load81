@@ -1,5 +1,7 @@
 load81
+bin2c
 *.o
+ttffont.h
 lua/src/*.o
 lua/src/*.a
 lua/src/lua
