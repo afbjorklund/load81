@@ -35,6 +35,7 @@
 #include <lualib.h>
 
 #include "framebuffer.h"
+#include "sfxr.h"
 #include "editor.h"
 #include "load81.h"
 
@@ -246,6 +247,16 @@ int spriteBinding(lua_State *L) {
     sprite = spriteLoad(L,filename);
     spriteBlit(l81.fb, sprite, x, y, angle, antialiasing);
     return 1;
+}
+
+int sfxBinding(lua_State *L) {
+    int i;
+
+    i = lua_tonumber(L, -1);
+
+    SelectSample(i);
+    PlaySample();
+    return 0;
 }
 
 /* ========================== Events processing ============================= */
@@ -481,6 +492,8 @@ void resetProgram(void) {
     lua_setglobal(l81.L,"getpixel");
     lua_pushcfunction(l81.L,spriteBinding);
     lua_setglobal(l81.L,"sprite");
+    lua_pushcfunction(l81.L,sfxBinding);
+    lua_setglobal(l81.L,"sfx");
 
     initSpriteEngine(l81.L);
 

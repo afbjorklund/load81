@@ -1,4 +1,5 @@
 #include "framebuffer.h"
+#include "sfxr.h"
 
 static unsigned char *BitmapFont[256];
 
@@ -7,8 +8,12 @@ void sdlInit(frameBuffer *fb, int fullscreen) {
     int flags = SDL_WINDOW_OPENGL;
 
     if (fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
-    if (SDL_Init(SDL_INIT_VIDEO) == -1) {
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) == -1) {
         fprintf(stderr, "SDL Init error: %s\n", SDL_GetError());
+        exit(1);
+    }
+    if (SDLAudioInit() == -1) {
+        fprintf(stderr, "SDL AudioInit error: %s\n", SDL_GetError());
         exit(1);
     }
     atexit(SDL_Quit);

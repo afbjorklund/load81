@@ -58,10 +58,22 @@ Drawing functions:
 * triangle(x1,y1,x2,y2,x3,y3): draw a triangle with the specified vertex.
 * getpixel(x,y): return the red,gree,blue value of the specified pixel.
 * sprite(file,x,y,[rotation],[antialiasing]): draw sprite at coordinates with the specified rotation (in degrees, default 0) and antialiasing (default false).
+* sfx(i): play sound effect #i
 
 Control functions:
 
 * setFPS(fps): Set the frame rate. For default it's set to 30 frames per second.
+
+SOUND EFFECTS
+===
+
+0: pickup/coin
+1: laser/shoot
+2: explosion
+3: powerup
+4: hit/hurt
+5: jump
+6: blip/select
 
 KEYBOARD EVENTS
 ===

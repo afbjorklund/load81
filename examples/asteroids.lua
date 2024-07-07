@@ -85,6 +85,7 @@ function fire()
     -- Finally insert the bullet in the table of bullets
     table.insert(bullets,b)
     last_bullet_ticks = ticks
+    sfx(1)
 end
 
 -- Draw the screen, move objects, detect collisions.
@@ -176,6 +177,7 @@ function checkBulletCollision()
     local i,j,b,a,del_asteroids,del_bullets
     del_asteroids = {}
     del_bullets = {}
+    boom = false
     for i,b in pairs(bullets) do
         for j,a in pairs(asteroids) do
             local distance,dx,dy
@@ -185,9 +187,13 @@ function checkBulletCollision()
             if distance < a.ray then
                 del_asteroids[j] = true
                 del_bullets[i] = true
+                boom = true
                 break
             end
         end
+    end
+    if boom then
+      sfx(2)
     end
     for i,b in pairs(del_bullets) do
         table.remove(bullets,i)
