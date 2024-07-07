@@ -1,4 +1,5 @@
 PKGS=lua5.1 sdl2 SDL2_gfx SDL2_image
+PKGS+=SDL2_ttf
 CFLAGS=-O2 -Wall -W $(shell pkg-config --cflags $(PKGS))
 LDLIBS=-lm $(shell pkg-config --libs $(PKGS))
 

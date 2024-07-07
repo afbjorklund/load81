@@ -11,13 +11,28 @@
 #include <lualib.h>
 
 #define FONT_C64 0
+#define FONT_TTF 0
 
+#if FONT_TTF
+#include <SDL_ttf.h>
+#include <SDL_render.h>
+#endif
+
+#if FONT_TTF
+extern int FontWidth;
+extern int FontHeight;
+extern int FontKerning;
+#define FONT_WIDTH FontWidth
+#define FONT_HEIGHT FontHeight
+#define FONT_KERNING FontKerning
+#else
 #define FONT_WIDTH 16
 #define FONT_HEIGHT 16
 #if FONT_C64
 #define FONT_KERNING 16
 #else
 #define FONT_KERNING 10
+#endif
 #endif
 
 typedef struct frameBuffer {
@@ -44,6 +59,7 @@ void drawLine(frameBuffer *fb, int x1, int y1, int x2, int y2, int r, int g, int
 
 /* Bitmap font */
 void bfLoadFont(char **c);
+int ttfLoadFont(void **f);
 void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, int alpha);
 void bfWriteString(frameBuffer *fb, int xp, int yp, const char *s, int len, int r, int g, int b, int alpha);
 

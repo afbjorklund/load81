@@ -2,7 +2,18 @@
 
 static unsigned char *BitmapFont[256];
 
+#if FONT_TTF
+TTF_Font *TrueTypeFont;
+#endif
+
 /* ============================= Frame buffer ============================== */
+void sdlQuit() {
+#if FONT_TTF
+	TTF_Quit();
+#endif
+	SDL_Quit();
+}
+
 void sdlInit(frameBuffer *fb, int fullscreen) {
     int flags = SDL_WINDOW_OPENGL;
 
@@ -11,7 +22,13 @@ void sdlInit(frameBuffer *fb, int fullscreen) {
         fprintf(stderr, "SDL Init error: %s\n", SDL_GetError());
         exit(1);
     }
-    atexit(SDL_Quit);
+#if FONT_TTF
+    if (TTF_Init() == -1) {
+        fprintf(stderr, "TTF Init error: %s\n", SDL_GetError());
+        exit(1);
+    }
+#endif
+    atexit(sdlQuit);
     fb->screen = SDL_CreateWindow("Load81",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -61,6 +78,9 @@ frameBuffer *createFrameBuffer(int width, int height, int fullscreen) {
     SDL_initFramerate(&fb->fps_mgr);
     /* Load the bitmap font */
     bfLoadFont((char**)BitmapFont);
+#if FONT_TTF
+    ttfLoadFont((void**)&TrueTypeFont);
+#endif
     return fb;
 }
 
@@ -109,7 +129,45 @@ void bfLoadFont(char **c) {
 #endif
 }
 
+#if FONT_TTF
+int FontWidth;
+int FontHeight;
+int FontKerning;
+#include "ttffont.h"
+#endif
+
+/* ============================= Truetype font ============================= */
+int ttfLoadFont(void **f) {
+#if FONT_TTF
+	TTF_Font *font;
+	SDL_RWops *mem;
+
+	mem = SDL_RWFromConstMem(c64_ttf, c64_ttf_size);
+	if (!mem) {
+		return -1;
+	}
+	font = TTF_OpenFontRW(mem, 0, 12);
+	if (!font) {
+		return -1;
+	}
+	FontWidth = 16;
+	FontHeight = 16;
+	FontKerning = 10;
+	*f = font;
+	return 0;
+#else
+	*f = NULL;
+	return -1;
+#endif
+}
+
 void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, int alpha) {
+#if FONT_TTF
+   char s[1] = { c };
+
+   bfWriteString(fb, xp, yp, s, 1, r, g, b, alpha);
+   return;
+#endif
     int x,y;
     unsigned char *bitmap = BitmapFont[c&0xff];
 
@@ -141,11 +199,27 @@ void bfWriteChar(frameBuffer *fb, int xp, int yp, int c, int r, int g, int b, in
 }
 
 void bfWriteString(frameBuffer *fb, int xp, int yp, const char *s, int len, int r, int g, int b, int alpha) {
+#if FONT_TTF
+    SDL_Color color = { r, g, b, alpha};
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    int texW = 0, texH = 0;
+    (void) len;
+
+    surface = TTF_RenderText_Blended(TrueTypeFont, s, color);
+    texture = SDL_CreateTextureFromSurface(fb->renderer, surface);
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { xp, fb->height-1-yp - texH, texW, texH };
+    SDL_RenderCopy(fb->renderer, texture, NULL, &dstrect);
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+#else
     int i;
 
     for (i = 0; i < len; i++)
         bfWriteChar(fb,xp-((16-FONT_KERNING)/2)+i*FONT_KERNING,yp,
                     s[i],r,g,b,alpha);
+#endif
 }
 
 /* ================================ Sprites =================================
