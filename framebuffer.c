@@ -6,7 +6,10 @@ static unsigned char *BitmapFont[256];
 void sdlInit(frameBuffer *fb, int fullscreen) {
     int flags = SDL_WINDOW_OPENGL;
 
-    if (fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
+    if (fullscreen)
+        flags |= SDL_WINDOW_FULLSCREEN;
+    else
+        flags |= SDL_WINDOW_ALLOW_HIGHDPI;
     if (SDL_Init(SDL_INIT_VIDEO) == -1) {
         fprintf(stderr, "SDL Init error: %s\n", SDL_GetError());
         exit(1);
